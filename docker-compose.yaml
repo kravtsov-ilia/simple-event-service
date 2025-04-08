@@ -1,0 +1,44 @@
+services:
+  event_manager:
+    build:
+      context: ./services/event_manager/
+      dockerfile: Dockerfile
+    container_name: event_manager
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongo
+      - rabbitmq
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/event_db
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/
+#
+#  notification-service:
+#    build: ./notification-service
+#    container_name: notification-service
+#    ports:
+#      - "8001:8000"
+#    depends_on:
+#      - mongo
+#      - rabbitmq
+#    environment:
+#      - MONGO_URI=mongodb://mongo:27017/notification_db
+#      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/
+
+  mongo:
+    image: mongo:8.0
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+volumes:
+  mongo-data:
